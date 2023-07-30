@@ -101,22 +101,25 @@ if __name__ == "__main__":
             if process.arrival_time <= time_passed and not process.is_arrived:
                 process.is_arrived = True
                 ready_queue.append(process)
+                print("ready_queue")
+                print_process_table(ready_queue)
 
     put_processes_in_ready_queue(processes)
 
     while check_is_execution_completed(processes):
-        print(f'\n===================== time_passed {time_passed} ====================\n')
-        print("running_queue")
-        print_process_table(running_queue)
         if len(ready_queue) > 0:
             if time_passed >= ready_queue[0].arrival_time:
                 running_queue.append(ready_queue.pop(0))
+                print("running_queue")
+                print_process_table(running_queue)
 
             if len(running_queue) > 0:
                 time_quanta = 0
                 while time_quanta < quantum_size:
-                    time_quanta += 1
                     time_passed += 1
+                    print(f'\n===================== time_passed {time_passed} ====================\n')
+                    time_quanta += 1
+                    print(f'\n===================== time_quanta {time_quanta} ====================\n')
                     running_queue[0].decrement_time_left()
                     if running_queue[0].time_left == 0:
                         break
@@ -124,19 +127,20 @@ if __name__ == "__main__":
                 put_processes_in_ready_queue(processes)
                 if ran_process.time_left > 0:
                     ready_queue.append(ran_process)
+                    print("ready_queue")
+                    print_process_table(ready_queue)
                 else: 
                     ran_process.set_completion_time(time_passed)
                     ran_process.set_turn_around_time()
                     ran_process.set_wait_time()
             else:
                 time_passed += 1
+                print(f'\n===================== time_passed {time_passed} ====================\n')
                 put_processes_in_ready_queue(processes)
         else:
             time_passed += 1
+            print(f'\n===================== time_passed {time_passed} ====================\n')
             put_processes_in_ready_queue(processes)
-
-        print("ready_queue")
-        print_process_table(ready_queue)
 
     print("Final Process List")
     print_process_table(processes)
