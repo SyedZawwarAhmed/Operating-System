@@ -32,8 +32,8 @@ class Process:
 def input_entity(entity: str, min: int, max: int):
     number_of_entities = None
     while True:
-        # number_of_entities = int(input(f'Enter the {entity} (min: {min}, max: {max}):- '))
-        number_of_entities = randint(0, 10)
+        number_of_entities = int(input(f'Enter the {entity} (min: {min}, max: {max}):- '))
+        # number_of_entities = randint(0, 10)
         if number_of_entities >= min and number_of_entities <= max:
             break
     return number_of_entities
@@ -53,9 +53,9 @@ def print_process_list(process_list):
 
 def print_process_table(process_list):
     table = Texttable()
-    table_rows = [["process_id", "arrival_time", "burst_time", "time_left", "completion_time", "turn_around_time", "wait_time", "response_time"]]
+    table_rows = [["process_id", "arrival_time", "burst_time", "time_left", "completion_time", "turn_around_time", "wait_time"]]
     for process in process_list:
-        new_row = [process.process_id, process.arrival_time, process.burst_time, process.time_left, process.completion_time, process.turn_arount_time, process.wait_time, process.response_time]
+        new_row = [process.process_id, process.arrival_time, process.burst_time, process.time_left, process.completion_time, process.turn_arount_time, process.wait_time]
         table_rows.append(new_row)
     table.add_rows(table_rows)
     print(table.draw())
@@ -70,20 +70,20 @@ def check_is_execution_completed(process_list):
 
 
 if __name__ == "__main__":
-    # number_of_processes = input_entity("number of processes", 3, 5)
-    number_of_processes = 4
-    arrival_times = [0, 1, 2, 4]
-    burst_times = [5, 4, 2, 1]
+    number_of_processes = input_entity("number of processes", 3, 5)
+    # number_of_processes = 4
+    # arrival_times = [0, 1, 2, 4]
+    # burst_times = [5, 4, 2, 1]
 
     processes = []
     for i in range(number_of_processes):
         process_id = i + 1
-        # execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
-        execution_time = burst_times[i]
+        execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
+        # execution_time = burst_times[i]
         arrival_time = 0
         if i > 0:
-            # arrival_time = input_entity(f'arrival time of process {process_id}', 1, 10)
-            arrival_time = arrival_times[i]
+            arrival_time = input_entity(f'arrival time of process {process_id}', 1, 10)
+            # arrival_time = arrival_times[i]
         processes.append(Process(process_id, arrival_time, execution_time, execution_time))
 
     quantum_size = input_entity("quantum size", 1, 3)
