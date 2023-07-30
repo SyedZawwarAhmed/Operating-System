@@ -32,8 +32,8 @@ class Process:
 def input_entity(entity: str, min: int, max: int):
     number_of_entities = None
     while True:
-        number_of_entities = int(input(f'Enter the {entity} (min: {min}, max: {max}):- '))
-        # number_of_entities = randint(0, 10)
+        # number_of_entities = int(input(f'Enter the {entity} (min: {min}, max: {max}):- '))
+        number_of_entities = randint(0, 10)
         if number_of_entities >= min and number_of_entities <= max:
             break
     return number_of_entities
@@ -58,6 +58,7 @@ def print_process_table(process_list):
         new_row = [process.process_id, process.arrival_time, process.burst_time, process.time_left, process.completion_time, process.turn_arount_time, process.wait_time]
         table_rows.append(new_row)
     table.add_rows(table_rows)
+    table.set_max_width(200)
     print(table.draw())
 
 def check_is_execution_completed(process_list):
