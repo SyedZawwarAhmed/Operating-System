@@ -54,9 +54,9 @@ def print_process_list(process_list):
 
 def print_process_table(process_list):
     table = Texttable()
-    table_rows = [["process_id", "arrival_time", "burst_time", "time_left", "completion_time", "turn_around_time", "wait_time", "response_time"]]
+    table_rows = [["process_id", "arrival_time", "burst_time", "completion_time", "turn_around_time", "wait_time", "response_time"]]
     for process in process_list:
-        new_row = [process.process_id, process.arrival_time, process.burst_time, process.time_left, process.completion_time, process.turn_arount_time, process.wait_time, process.response_time]
+        new_row = [process.process_id, process.arrival_time, process.burst_time, process.completion_time, process.turn_arount_time, process.wait_time, process.response_time]
         table_rows.append(new_row)
     table.add_rows(table_rows)
     table.set_max_width(200)
