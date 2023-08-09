@@ -9,6 +9,7 @@ class Process:
         self.burst_time = burst_time
         self.time_left = execution_time
         self.is_arrived = False
+        self.is_ready = False
         self.completion_time = 0
         self.turn_arount_time = 0
         self.wait_time = 0
@@ -32,8 +33,8 @@ class Process:
 def input_entity(entity: str, min: int, max: int):
     number_of_entities = None
     while True:
-        # number_of_entities = int(input(f'Enter the {entity} (min: {min}, max: {max}):- '))
-        number_of_entities = randint(0, 10)
+        number_of_entities = int(input(f'Enter the {entity} (min: {min}, max: {max}):- '))
+        # number_of_entities = randint(0, 10)
         if number_of_entities >= min and number_of_entities <= max:
             break
     return number_of_entities
@@ -53,9 +54,9 @@ def print_process_list(process_list):
 
 def print_process_table(process_list):
     table = Texttable()
-    table_rows = [["process_id", "arrival_time", "burst_time", "time_left", "completion_time", "turn_around_time", "wait_time"]]
+    table_rows = [["process_id", "arrival_time", "burst_time", "time_left", "completion_time", "turn_around_time", "wait_time", "response_time"]]
     for process in process_list:
-        new_row = [process.process_id, process.arrival_time, process.burst_time, process.time_left, process.completion_time, process.turn_arount_time, process.wait_time]
+        new_row = [process.process_id, process.arrival_time, process.burst_time, process.time_left, process.completion_time, process.turn_arount_time, process.wait_time, process.response_time]
         table_rows.append(new_row)
     table.add_rows(table_rows)
     table.set_max_width(200)
@@ -110,7 +111,11 @@ if __name__ == "__main__":
     while check_is_execution_completed(processes):
         if len(ready_queue) > 0:
             if time_passed >= ready_queue[0].arrival_time:
-                running_queue.append(ready_queue.pop(0))
+                ready_process = ready_queue.pop(0)
+                if not ready_process.is_ready:
+                    ready_process.set_response_time(time_passed)
+                    ready_process.is_ready = True
+                running_queue.append(ready_process)
                 print("running_queue")
                 print_process_table(running_queue)
 
