@@ -80,18 +80,16 @@ if __name__ == "__main__":
     processes = []
     for i in range(number_of_processes):
         process_id = i + 1
+        arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
         execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
+        # arrival_time = arrival_times[i]
         # execution_time = burst_times[i]
-        arrival_time = 0
-        if i > 0:
-            arrival_time = input_entity(f'arrival time of process {process_id}', 1, 10)
-            # arrival_time = arrival_times[i]
         processes.append(Process(process_id, arrival_time, execution_time, execution_time))
 
     quantum_size = input_entity("quantum size", 1, 3)
     quantum_size = 2
     print({"quantum_size": quantum_size}, '\n')
-    print_process_table(processes)
+    # print_process_table(processes)
 
     ready_queue = []
     running_queue = []
@@ -103,8 +101,8 @@ if __name__ == "__main__":
             if process.arrival_time <= time_passed and not process.is_arrived:
                 process.is_arrived = True
                 ready_queue.append(process)
-                print("ready_queue")
-                print_process_table(ready_queue)
+                # print("ready_queue")
+                # print_process_table(ready_queue)
 
     put_processes_in_ready_queue(processes)
 
@@ -116,36 +114,37 @@ if __name__ == "__main__":
                     ready_process.set_response_time(time_passed)
                     ready_process.is_ready = True
                 running_queue.append(ready_process)
-                print("running_queue")
-                print_process_table(running_queue)
+                # print("running_queue")
+                # print_process_table(running_queue)
 
             if len(running_queue) > 0:
                 time_quanta = 0
                 while time_quanta < quantum_size:
                     time_passed += 1
-                    print(f'\n===================== time_passed {time_passed} ====================\n')
+                    # print(f'\n===================== time_passed {time_passed} ====================\n')
                     time_quanta += 1
-                    print(f'\n===================== time_quanta {time_quanta} ====================\n')
+                    # print(f'\n===================== time_quanta {time_quanta} ====================\n')
                     running_queue[0].decrement_time_left()
                     if running_queue[0].time_left == 0:
                         break
                 ran_process = running_queue.pop(0)
+                print_process_table([ran_process])
                 put_processes_in_ready_queue(processes)
                 if ran_process.time_left > 0:
                     ready_queue.append(ran_process)
-                    print("ready_queue")
-                    print_process_table(ready_queue)
+                    # print("ready_queue")
+                    # print_process_table(ready_queue)
                 else: 
                     ran_process.set_completion_time(time_passed)
                     ran_process.set_turn_around_time()
                     ran_process.set_wait_time()
             else:
                 time_passed += 1
-                print(f'\n===================== time_passed {time_passed} ====================\n')
+                # print(f'\n===================== time_passed {time_passed} ====================\n')
                 put_processes_in_ready_queue(processes)
         else:
             time_passed += 1
-            print(f'\n===================== time_passed {time_passed} ====================\n')
+            # print(f'\n===================== time_passed {time_passed} ====================\n')
             put_processes_in_ready_queue(processes)
 
     print("Final Process List")
