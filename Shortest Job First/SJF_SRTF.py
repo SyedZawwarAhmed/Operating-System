@@ -20,6 +20,7 @@ class Process:
         self.wait_time = 0
         self.response_time = 0
         self.utilization_time = 0
+        self.response_ratio = 0
         self.start_times = []
         self.end_times = []
 
@@ -52,6 +53,9 @@ class Process:
 
     def append_end_times(self, time_passed):
         self.end_times.append(time_passed)
+
+    def set_response_ratio(self, time_passed):
+        self.response_ratio = ((time_passed - self.arrival_time) + self.burst_time) / self.burst_time
 
 
 def input_entity(entity: str, min: int, max: int):
@@ -134,6 +138,9 @@ def sort_processes_according_to_shortest_arrival(process_list):
 def sort_processes_according_to_shortest_time_left(process_list):
     return sorted(process_list, key=lambda process: process.time_left, reverse=False)
 
+def sort_processes_according_to_highest_response_ratio(process_list):
+    return sorted(process_list, key=lambda process: process.response_ratio, reverse=True)
+
 def get_processes_of_same_shortest_job(process_list, minimum_job):
     processes_of_same_shortest_job = []
     for process in process_list:
@@ -147,6 +154,14 @@ def get_processes_of_same_shortest_time_left(process_list, minimum_time_left):
         if process.time_left == minimum_time_left:
             processes_of_same_shortest_time_left.append(process)
     return processes_of_same_shortest_time_left
+
+def get_processes_of_same_highest_response_ratio(process_list, maximum_response_ratio):
+    processes_of_same_highest_response_ratio = []
+    for process in process_list:
+        if process.time_left == maximum_response_ratio:
+            processes_of_same_highest_response_ratio.append(process)
+    return processes_of_same_highest_response_ratio
+
 
 def check_should_execution_proceed(process_list):
     for process in process_list:
@@ -267,25 +282,79 @@ def execute_shortest_remaining_time_first(processes):
     #     print("end times", process.end_times)
     #     print()
 
+def execute_highest_response_ratio_first(processes):
+    ready_queue = []
+    running_queue = []
+    time_passed = 0
+    print('\nExecuting Processes according to Highest Response Ratio First.')
+    while check_should_execution_proceed(processes):
+        ready_queue = []
+        for process in processes:
+            process.set_response_ratio(time_passed)
+            if process.arrival_time <= time_passed and process.time_left > 0:
+                ready_queue.append(process)
+
+        if len(ready_queue) == 0:
+            time_passed += 1
+            # print("CPU was idle when time passed is", time_passed, '\n')
+        else:
+            sorted_ready_queue_according_to_highest_response_ratio = sort_processes_according_to_highest_response_ratio(
+                ready_queue)
+            maximum_response_ratio = sorted_ready_queue_according_to_highest_response_ratio[0].burst_time
+
+            processes_of_same_highest_response_ratio = get_processes_of_same_highest_response_ratio(
+                sorted_ready_queue_according_to_highest_response_ratio, maximum_response_ratio)
+
+            sorted_ready_queue_according_to_shortest_arrival = sort_processes_according_to_shortest_arrival(
+                processes_of_same_highest_response_ratio)
+
+            running_queue = [
+                sorted_ready_queue_according_to_shortest_arrival[0]]
+
+            ran_process = running_queue[0]
+            ran_process.is_ready = True
+            ran_process.set_response_time(time_passed)
+            ran_process.set_start_time(time_passed)
+            ran_process.append_start_times(time_passed)
+            time_passed += ran_process.burst_time
+            ran_process.set_end_time(time_passed)
+            ran_process.append_end_times(time_passed)
+            ran_process.time_left = 0
+            ran_process.set_completion_time(time_passed)
+            ran_process.set_turn_around_time()
+            ran_process.set_wait_time()
+            ran_process.set_utilization_time()
+
+            # print("\nProcess ran when time passed is", time_passed)
+            # print_process_table(running_queue)
+            # print()
+
+    draw_gantt_chart(processes)
+
+    print("Final Process Table")
+    print_process_table(processes)
+    print_process_average_table(processes)
 
 if __name__ == "__main__":
-    number_of_processes = input_entity("number of processes", 3, 5)
-    # number_of_processes = 5
-    # arrival_times = [2, 5, 1, 0, 4]
-    # burst_times = [6, 2, 8, 3, 4]
+    # number_of_processes = input_entity("number of processes", 3, 5)
+    number_of_processes = 5
+    arrival_times = [1, 3, 5, 7, 8]
+    burst_times = [3, 6, 8, 4, 5]
     processes = []
     for i in range(number_of_processes):
         process_id = i + 1
-        arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
-        execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
-        # arrival_time = arrival_times[i]
-        # execution_time = burst_times[i]
+        # arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
+        # execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
+        arrival_time = arrival_times[i]
+        execution_time = burst_times[i]
         processes.append(Process(process_id, arrival_time,
                          execution_time, execution_time))
 
-    chosen_algorithm = input_entity(f'algorithm you want to execute (1 for SJF, 2 for SRTF)', 1, 2)
+    chosen_algorithm = input_entity(f'algorithm you want to execute (1 for SJF, 2 for SRTF, 2 for HRRF)', 1, 3)
 
     if chosen_algorithm == 1:
         execute_shortest_job_first(processes)
     elif chosen_algorithm == 2:
         execute_shortest_remaining_time_first(processes)
+    elif chosen_algorithm == 3:
+        execute_highest_response_ratio_first(processes)
