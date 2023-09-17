@@ -116,6 +116,9 @@ def sort_processes_according_to_shortest_arrival(process_list):
     return sorted(process_list, key=lambda process: process.arrival_time, reverse=False)
 
 
+def sort_processes_according_to_shortest_time_left(process_list):
+    return sorted(process_list, key=lambda process: process.time_left, reverse=False)
+
 def get_processes_of_same_shortest_job(process_list, minimum_job):
     processes_of_same_shortest_job = []
     for process in process_list:
@@ -123,6 +126,12 @@ def get_processes_of_same_shortest_job(process_list, minimum_job):
             processes_of_same_shortest_job.append(process)
     return processes_of_same_shortest_job
 
+def get_processes_of_same_shortest_time_left(process_list, minimum_time_left):
+    processes_of_same_shortest_time_left = []
+    for process in process_list:
+        if process.time_left == minimum_time_left:
+            processes_of_same_shortest_time_left.append(process)
+    return processes_of_same_shortest_time_left
 
 def check_should_execution_proceed(process_list):
     for process in process_list:
@@ -160,6 +169,7 @@ def execute_shortest_job_first(processes):
                 sorted_ready_queue_according_to_shortest_arrival[0]]
 
             ran_process = running_queue[0]
+            ran_process.is_ready = True
             ran_process.set_response_time(time_passed)
             ran_process.set_start_time(time_passed)
             time_passed += ran_process.burst_time
@@ -196,22 +206,24 @@ def execute_shortest_remaining_time_first(processes):
         if len(ready_queue) == 0:
             time_passed += 1
         else:
-            sorted_ready_queue_according_to_shortest_job = sort_processes_according_to_shortest_job(
+            sorted_ready_queue_according_to_shortest_time_left = sort_processes_according_to_shortest_time_left(
                 ready_queue)
-            minimum_job = sorted_ready_queue_according_to_shortest_job[0].burst_time
+            minimum_time_left = sorted_ready_queue_according_to_shortest_time_left[0].time_left
 
-            processes_of_same_shortest_job = get_processes_of_same_shortest_job(
-                sorted_ready_queue_according_to_shortest_job, minimum_job)
+            processes_of_same_shortest_time_left = get_processes_of_same_shortest_time_left(
+                sorted_ready_queue_according_to_shortest_time_left, minimum_time_left)
 
             sorted_ready_queue_according_to_shortest_arrival = sort_processes_according_to_shortest_arrival(
-                processes_of_same_shortest_job)
+                processes_of_same_shortest_time_left)
 
             running_queue = [
                 sorted_ready_queue_according_to_shortest_arrival[0]]
 
             ran_process = running_queue[0]
-            ran_process.set_response_time(time_passed)
-            ran_process.set_start_time(time_passed)
+            if not ran_process.is_ready:
+                ran_process.set_response_time(time_passed)
+                ran_process.set_start_time(time_passed)
+                ran_process.is_ready = True
             time_passed += 1
             ran_process.time_left -= 1
             if ran_process.time_left == 0:
@@ -228,9 +240,9 @@ def execute_shortest_remaining_time_first(processes):
 
 if __name__ == "__main__":
     # number_of_processes = input_entity("number of processes", 3, 5)
-    number_of_processes = 5
-    arrival_times = [2, 5, 1, 0, 4]
-    burst_times = [6, 2, 8, 3, 4]
+    number_of_processes = 4
+    arrival_times = [0, 1, 2, 4]
+    burst_times = [5, 3, 4, 1]
     processes = []
     for i in range(number_of_processes):
         process_id = i + 1
