@@ -21,6 +21,8 @@ class Process:
         self.wait_time = 0
         self.response_time = 0
         self.utilization_time = 0
+        self.start_times = []
+        self.end_times = []
 
     def decrement_time_left(self):
         self.time_left -= 1
@@ -45,6 +47,12 @@ class Process:
 
     def set_utilization_time(self):
         self.utilization_time = self.burst_time / self.turn_around_time
+
+    def append_start_times(self, time_passed):
+        self.start_times.append(time_passed)
+
+    def append_end_times(self, time_passed):
+        self.end_times.append(time_passed)
 
 
 def input_entity(entity: str, min: int, max: int):
@@ -98,8 +106,16 @@ def seconds_to_timestamp(seconds):
 
 
 def draw_gantt_chart(process_list):
-    df = pd.DataFrame([dict(Process=process.process_id, Start=seconds_to_timestamp(
-        process.start_time), Finish=seconds_to_timestamp(process.end_time)) for process in process_list])
+    data_frame_list = []
+    # df = pd.DataFrame([dict(Process=process.process_id, Start=seconds_to_timestamp(
+    #     process.start_time), Finish=seconds_to_timestamp(process.end_time)) for process in process_list])
+
+    for process in process_list:
+        for i in range(len(process.start_times)):
+            data_frame_list.append(dict(Process=process.process_id, Start=seconds_to_timestamp(
+        process.start_times[i]), Finish=seconds_to_timestamp(process.end_times[i])))
+    df = pd.DataFrame(data_frame_list)
+    
 
     fig = px.timeline(df, x_start="Start", x_end="Finish", y="Process")
     fig.update_yaxes(autorange="reversed")
@@ -172,8 +188,10 @@ def execute_shortest_job_first(processes):
             ran_process.is_ready = True
             ran_process.set_response_time(time_passed)
             ran_process.set_start_time(time_passed)
+            ran_process.append_start_times(time_passed)
             time_passed += ran_process.burst_time
             ran_process.set_end_time(time_passed)
+            ran_process.append_end_times(time_passed)
             ran_process.time_left = 0
             ran_process.set_completion_time(time_passed)
             ran_process.set_turn_around_time()
@@ -193,10 +211,10 @@ def execute_shortest_job_first(processes):
 
 def execute_shortest_remaining_time_first(processes):
     ready_queue = []
-    running_queue = []
     time_passed = 0
 
     print('\nExecuting Processes according to Shortest Remaining Time First.')
+    ran_process = None
     while check_should_execution_proceed(processes):
         ready_queue = []
         for process in processes:
@@ -219,7 +237,11 @@ def execute_shortest_remaining_time_first(processes):
             running_queue = [
                 sorted_ready_queue_according_to_shortest_arrival[0]]
 
-            ran_process = running_queue[0]
+            if not ran_process or ran_process != running_queue[0]:
+                running_queue[0].append_start_times(time_passed)
+                if ran_process:
+                    ran_process.append_end_times(time_passed)
+                ran_process = running_queue[0]
             if not ran_process.is_ready:
                 ran_process.set_response_time(time_passed)
                 ran_process.set_start_time(time_passed)
@@ -232,10 +254,19 @@ def execute_shortest_remaining_time_first(processes):
                 ran_process.set_turn_around_time()
                 ran_process.set_wait_time()
                 ran_process.set_utilization_time()
+    if len(ran_process.start_times) > len(ran_process.end_times):
+        ran_process.append_end_times(time_passed)
+
+    draw_gantt_chart(processes)
 
     print("Final Process Table")
     print_process_table(processes)
     print_process_average_table(processes)
+    for process in processes:
+        print(process.process_id)
+        print("start times", process.start_times)
+        print("end times", process.end_times)
+        print()
 
 
 if __name__ == "__main__":
