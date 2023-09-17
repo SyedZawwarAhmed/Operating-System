@@ -67,25 +67,11 @@ def check_should_execution_proceed(process_list):
             return True
     return False
 
-if __name__ == "__main__":
-    number_of_processes = input_entity("number of processes", 3, 5)
-    # number_of_processes = 4
-    # arrival_times = [1, 2, 1, 4]
-    # burst_times = [3, 4, 2, 4]
-    processes = []
-    for i in range(number_of_processes):
-        process_id = i + 1
-        arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
-        execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
-        # arrival_time = arrival_times[i]
-        # execution_time = burst_times[i]
-        processes.append(Process(process_id, arrival_time, execution_time, execution_time))
-
+def execute_shortest_job_first(processes):
     ready_queue = []
     running_queue = []
     time_passed = 0
-
-    print()
+    print('\nExecuting Processes according to Shortest Job First.')
     while check_should_execution_proceed(processes):
         ready_queue = []
         for process in processes:
@@ -119,3 +105,25 @@ if __name__ == "__main__":
 
     print("Final Process Table")
     print_process_table(processes)
+
+# def execute_shortest_remaining_time_first(processes):
+
+
+if __name__ == "__main__":
+    number_of_processes = input_entity("number of processes", 3, 5)
+    # number_of_processes = 4
+    # arrival_times = [1, 2, 1, 4]
+    # burst_times = [3, 4, 2, 4]
+    processes = []
+    for i in range(number_of_processes):
+        process_id = i + 1
+        arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
+        execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
+        # arrival_time = arrival_times[i]
+        # execution_time = burst_times[i]
+        processes.append(Process(process_id, arrival_time, execution_time, execution_time))
+
+    chosen_algorithm = input_entity(f'algorithm you want to execute', 1, 3)
+
+    if chosen_algorithm == 1:
+        execute_shortest_job_first(processes)
