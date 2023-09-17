@@ -269,21 +269,21 @@ def execute_shortest_remaining_time_first(processes):
 
 
 if __name__ == "__main__":
-    # number_of_processes = input_entity("number of processes", 3, 5)
-    number_of_processes = 5
-    arrival_times = [2, 5, 1, 0, 4]
-    burst_times = [6, 2, 8, 3, 4]
+    number_of_processes = input_entity("number of processes", 3, 5)
+    # number_of_processes = 5
+    # arrival_times = [2, 5, 1, 0, 4]
+    # burst_times = [6, 2, 8, 3, 4]
     processes = []
     for i in range(number_of_processes):
         process_id = i + 1
-        # arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
-        # execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
-        arrival_time = arrival_times[i]
-        execution_time = burst_times[i]
+        arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
+        execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
+        # arrival_time = arrival_times[i]
+        # execution_time = burst_times[i]
         processes.append(Process(process_id, arrival_time,
                          execution_time, execution_time))
 
-    chosen_algorithm = input_entity(f'algorithm you want to execute', 1, 3)
+    chosen_algorithm = input_entity(f'algorithm you want to execute (1 for SJF, 2 for SRTF)', 1, 2)
 
     if chosen_algorithm == 1:
         execute_shortest_job_first(processes)
