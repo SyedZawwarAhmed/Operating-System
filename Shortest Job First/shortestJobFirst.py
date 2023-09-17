@@ -112,15 +112,15 @@ def draw_gantt_chart(process_list):
 
     for process in process_list:
         for i in range(len(process.start_times)):
-            data_frame_list.append(dict(Process=process.process_id, Start=seconds_to_timestamp(
+            data_frame_list.append(dict(Process=str(process.process_id), Start=seconds_to_timestamp(
         process.start_times[i]), Finish=seconds_to_timestamp(process.end_times[i])))
     df = pd.DataFrame(data_frame_list)
     
 
-    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Process")
-    fig.update_yaxes(autorange="reversed")
+    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Process", color="Process")
+    # fig.update_yaxes(autorange="reversed")
     fig.update_layout(xaxis=dict(title='Seconds', tickformat='%S', tickvals=pd.date_range(
-        start=df['Start'].min(), end=df['Finish'].max(), freq='S')))
+        start=df['Start'].min(), end=df['Finish'].max(), freq='S')), yaxis=dict(title='Processes', tickvals=[process.process_id for process in process_list]))
     fig.show()
 
 
@@ -271,9 +271,9 @@ def execute_shortest_remaining_time_first(processes):
 
 if __name__ == "__main__":
     # number_of_processes = input_entity("number of processes", 3, 5)
-    number_of_processes = 4
-    arrival_times = [0, 1, 2, 4]
-    burst_times = [5, 3, 4, 1]
+    number_of_processes = 5
+    arrival_times = [2, 5, 1, 0, 4]
+    burst_times = [6, 2, 8, 3, 4]
     processes = []
     for i in range(number_of_processes):
         process_id = i + 1
