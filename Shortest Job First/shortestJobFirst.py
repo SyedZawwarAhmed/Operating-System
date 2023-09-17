@@ -5,7 +5,6 @@ import plotly.express as px
 import pandas as pd
 from datetime import datetime
 
-
 class Process:
     def __init__(self, process_id, arrival_time, burst_time, execution_time):
         self.process_id = process_id
