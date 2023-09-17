@@ -79,9 +79,7 @@ def draw_gantt_chart(process_list):
 
     fig = px.timeline(df, x_start="Start", x_end="Finish", y="Process")
     fig.update_yaxes(autorange="reversed")
-    # fig.update_layout(xaxis=dict(title='Seconds', tickformat='%S'))
     fig.update_layout(xaxis=dict(title='Seconds', tickformat='%S', tickvals=pd.date_range(start=df['Start'].min(), end=df['Finish'].max(), freq='S')))
-
     fig.show()
 
 
