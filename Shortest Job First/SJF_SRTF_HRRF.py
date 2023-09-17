@@ -336,17 +336,17 @@ def execute_highest_response_ratio_first(processes):
     print_process_average_table(processes)
 
 if __name__ == "__main__":
-    # number_of_processes = input_entity("number of processes", 3, 5)
-    number_of_processes = 5
-    arrival_times = [1, 3, 5, 7, 8]
-    burst_times = [3, 6, 8, 4, 5]
+    number_of_processes = input_entity("number of processes", 3, 5)
+    # number_of_processes = 5
+    # arrival_times = [1, 3, 5, 7, 8]
+    # burst_times = [3, 6, 8, 4, 5]
     processes = []
     for i in range(number_of_processes):
         process_id = i + 1
-        # arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
-        # execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
-        arrival_time = arrival_times[i]
-        execution_time = burst_times[i]
+        arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
+        execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
+        # arrival_time = arrival_times[i]
+        # execution_time = burst_times[i]
         processes.append(Process(process_id, arrival_time,
                          execution_time, execution_time))
 
