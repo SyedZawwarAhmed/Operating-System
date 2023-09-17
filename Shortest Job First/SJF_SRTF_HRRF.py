@@ -5,6 +5,7 @@ import plotly.express as px
 import pandas as pd
 from datetime import datetime
 
+
 class Process:
     def __init__(self, process_id, arrival_time, burst_time, execution_time):
         self.process_id = process_id
@@ -55,7 +56,8 @@ class Process:
         self.end_times.append(time_passed)
 
     def set_response_ratio(self, time_passed):
-        self.response_ratio = ((time_passed - self.arrival_time) + self.burst_time) / self.burst_time
+        self.response_ratio = (
+            (time_passed - self.arrival_time) + self.burst_time) / self.burst_time
 
 
 def input_entity(entity: str, min: int, max: int):
@@ -96,7 +98,8 @@ def print_process_average_table(process_list):
     average_utilization_time = mean(
         [process.utilization_time for process in process_list])
 
-    new_row = [average_completion_time, average_turn_around_time, average_wait_time, average_response_time, average_utilization_time]
+    new_row = [average_completion_time, average_turn_around_time,
+               average_wait_time, average_response_time, average_utilization_time]
     table_rows.append(new_row)
     table.add_rows(table_rows)
     table.set_max_width(200)
@@ -116,11 +119,11 @@ def draw_gantt_chart(process_list):
     for process in process_list:
         for i in range(len(process.start_times)):
             data_frame_list.append(dict(Process=str(process.process_id), Start=seconds_to_timestamp(
-        process.start_times[i]), Finish=seconds_to_timestamp(process.end_times[i])))
+                process.start_times[i]), Finish=seconds_to_timestamp(process.end_times[i])))
     df = pd.DataFrame(data_frame_list)
-    
 
-    fig = px.timeline(df, x_start="Start", x_end="Finish", y="Process", color="Process")
+    fig = px.timeline(df, x_start="Start", x_end="Finish",
+                      y="Process", color="Process")
     # fig.update_yaxes(autorange="reversed")
     fig.update_layout(xaxis=dict(title='Seconds', tickformat='%S', tickvals=pd.date_range(
         start=df['Start'].min(), end=df['Finish'].max(), freq='S')), yaxis=dict(title='Processes', tickvals=[process.process_id for process in process_list]))
@@ -138,8 +141,10 @@ def sort_processes_according_to_shortest_arrival(process_list):
 def sort_processes_according_to_shortest_time_left(process_list):
     return sorted(process_list, key=lambda process: process.time_left, reverse=False)
 
+
 def sort_processes_according_to_highest_response_ratio(process_list):
     return sorted(process_list, key=lambda process: process.response_ratio, reverse=True)
+
 
 def get_processes_of_same_shortest_job(process_list, minimum_job):
     processes_of_same_shortest_job = []
@@ -148,12 +153,14 @@ def get_processes_of_same_shortest_job(process_list, minimum_job):
             processes_of_same_shortest_job.append(process)
     return processes_of_same_shortest_job
 
+
 def get_processes_of_same_shortest_time_left(process_list, minimum_time_left):
     processes_of_same_shortest_time_left = []
     for process in process_list:
         if process.time_left == minimum_time_left:
             processes_of_same_shortest_time_left.append(process)
     return processes_of_same_shortest_time_left
+
 
 def get_processes_of_same_highest_response_ratio(process_list, maximum_response_ratio):
     processes_of_same_highest_response_ratio = []
@@ -282,6 +289,7 @@ def execute_shortest_remaining_time_first(processes):
     #     print("end times", process.end_times)
     #     print()
 
+
 def execute_highest_response_ratio_first(processes):
     ready_queue = []
     running_queue = []
@@ -300,7 +308,8 @@ def execute_highest_response_ratio_first(processes):
         else:
             sorted_ready_queue_according_to_highest_response_ratio = sort_processes_according_to_highest_response_ratio(
                 ready_queue)
-            maximum_response_ratio = sorted_ready_queue_according_to_highest_response_ratio[0].burst_time
+            maximum_response_ratio = sorted_ready_queue_according_to_highest_response_ratio[
+                0].burst_time
 
             processes_of_same_highest_response_ratio = get_processes_of_same_highest_response_ratio(
                 sorted_ready_queue_according_to_highest_response_ratio, maximum_response_ratio)
@@ -335,6 +344,7 @@ def execute_highest_response_ratio_first(processes):
     print_process_table(processes)
     print_process_average_table(processes)
 
+
 if __name__ == "__main__":
     number_of_processes = input_entity("number of processes", 3, 5)
     # number_of_processes = 5
@@ -343,14 +353,17 @@ if __name__ == "__main__":
     processes = []
     for i in range(number_of_processes):
         process_id = i + 1
-        arrival_time = input_entity(f'arrival time of process {process_id}', 0, 10)
-        execution_time = input_entity(f'execution time of process {process_id}', 1, 10)
+        arrival_time = input_entity(
+            f'arrival time of process {process_id}', 0, 10)
+        execution_time = input_entity(
+            f'execution time of process {process_id}', 1, 10)
         # arrival_time = arrival_times[i]
         # execution_time = burst_times[i]
         processes.append(Process(process_id, arrival_time,
                          execution_time, execution_time))
 
-    chosen_algorithm = input_entity(f'algorithm you want to execute (1 for SJF, 2 for SRTF, 2 for HRRF)', 1, 3)
+    chosen_algorithm = input_entity(
+        f'algorithm you want to execute (1 for SJF, 2 for SRTF, 2 for HRRF)', 1, 3)
 
     if chosen_algorithm == 1:
         execute_shortest_job_first(processes)
