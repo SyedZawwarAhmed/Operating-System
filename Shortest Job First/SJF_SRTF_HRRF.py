@@ -363,7 +363,7 @@ if __name__ == "__main__":
                          execution_time, execution_time))
 
     chosen_algorithm = input_entity(
-        f'algorithm you want to execute (1 for SJF, 2 for SRTF, 2 for HRRF)', 1, 3)
+        f'algorithm you want to execute (1 for SJF, 2 for SRTF, 3 for HRRF)', 1, 3)
 
     if chosen_algorithm == 1:
         execute_shortest_job_first(processes)
